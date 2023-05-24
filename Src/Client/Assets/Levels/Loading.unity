@@ -1264,14 +1264,13 @@ GameObject:
   - component: {fileID: 526364204}
   - component: {fileID: 526364206}
   - component: {fileID: 526364205}
-  - component: {fileID: 526364207}
   m_Layer: 5
   m_Name: LoginPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &526364204
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1333,17 +1332,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 526364203}
   m_CullTransparentMesh: 0
---- !u!114 &526364207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 526364203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97de517dc5ce40c488a9a81df2b596c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &582322191
 GameObject:
   m_ObjectHideFlags: 0
@@ -2390,14 +2378,14 @@ GameObject:
   - component: {fileID: 1023949124}
   - component: {fileID: 1023949126}
   - component: {fileID: 1023949125}
-  - component: {fileID: 1023949127}
+  - component: {fileID: 1023949128}
   m_Layer: 5
   m_Name: RegisterPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1023949124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2461,7 +2449,7 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1023949123}
   m_CullTransparentMesh: 0
---- !u!114 &1023949127
+--- !u!114 &1023949128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2469,9 +2457,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1023949123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b11e4559a29902c42b2e2a659e7d164d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f91b1f16755f684686ebc1681ac6985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  username: {fileID: 130788688}
+  password: {fileID: 2113746043}
+  passwordConfirm: {fileID: 1549924174}
+  buttonRegister: {fileID: 1540120570}
 --- !u!1 &1209656711
 GameObject:
   m_ObjectHideFlags: 0
@@ -3303,7 +3295,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1023949127}
+      - m_Target: {fileID: 1023949128}
         m_MethodName: OnClickRegister
         m_Mode: 1
         m_Arguments:
