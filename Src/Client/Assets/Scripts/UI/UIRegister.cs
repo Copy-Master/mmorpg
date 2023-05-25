@@ -14,7 +14,7 @@ public class UIRegister : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        UserService.Instance.OnRegister = this.OnRegister;
+        UserService.Instance.OnRegister = this.OnRegister;  //逻辑层需要间接调用UI层即通过事件注册调用，这里注册OnRegister函数给逻辑层调用，用于输出提示结果
 
     }
 	
@@ -27,7 +27,7 @@ public class UIRegister : MonoBehaviour {
 		
 	}
 
-    public void OnClickRegister()
+    public void OnClickRegister()   //button组件触发的事件，需要在unity的button组件中增加该函数
     {
         if (string.IsNullOrEmpty(this.username.text))
         {
@@ -49,6 +49,6 @@ public class UIRegister : MonoBehaviour {
             MessageBox.Show("两次输入的密码不一致");
             return;
         }
-        UserService.Instance.SendRegister(this.username.text, this.password.text);
+        UserService.Instance.SendRegister(this.username.text, this.password.text);  //UI层可直接调用逻辑层，直接将收到的数据发送给逻辑层处理
     }
 }

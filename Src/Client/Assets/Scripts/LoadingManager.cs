@@ -20,11 +20,11 @@ public class LoadingManager : MonoBehaviour {
     // Use this for initialization
     IEnumerator Start()
     {
-        log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xml"));
+        log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xml"));    //log4net初始化，用于自行记录日志
         UnityLogger.Init();
         Common.Log.Init("Unity");
         Common.Log.Info("LoadingManager start");
-
+        //下面则是界面的初始化和显示设置了
         UITips.SetActive(true);
         UILoading.SetActive(false);
         UILogin.SetActive(false);
