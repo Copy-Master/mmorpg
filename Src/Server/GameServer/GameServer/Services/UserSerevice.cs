@@ -16,6 +16,7 @@ namespace GameServer.Services
         public UserService()
         {
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserRegisterRequest>(this.OnRegister);
+            MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserLoginRequest>(this.OnLogin);
         }
 
         public void Init()
@@ -43,9 +44,39 @@ namespace GameServer.Services
                 DBService.Instance.Entities.Users.Add(new TUser() { Username = request.User, Password = request.Passward, Player = player });
                 DBService.Instance.Entities.SaveChanges();
                 message.Response.userRegister.Result = Result.Success;
-                message.Response.userRegister.Errormsg = "None";
+                message.Response.userRegister.Errormsg = "注册成功";
             }
 
+            byte[] data = PackageHandler.PackMessage(message);
+            sender.SendData(data, 0, data.Length);
+        }
+        void OnLogin(NetConnection<NetSession> sender, UserLoginRequest request)
+        {
+            Log.InfoFormat("UserLoginRequest: User:{0}  Pass:{1}", request.User, request.Passward);
+
+            NetMessage message = new NetMessage();
+            message.Response = new NetMessageResponse();
+            message.Response.userLogin = new UserLoginResponse();
+
+            TUser user = DBService.Instance.Entities.Users.Where(u => u.Username == request.User).FirstOrDefault();
+            if (user != null)
+            {
+                if (user.Password != request.Passward)
+                {
+                    message.Response.userLogin.Result = Result.Failed;
+                    message.Response.userLogin.Errormsg = "密码错误.";
+                }
+                else
+                {
+                    message.Response.userLogin.Result = Result.Success;
+                    message.Response.userLogin.Errormsg = "登陆成功.";
+                }
+            }
+            else
+            {
+                message.Response.userLogin.Result = Result.Failed;
+                message.Response.userLogin.Errormsg = "用户不存在.";
+            }
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);
         }
