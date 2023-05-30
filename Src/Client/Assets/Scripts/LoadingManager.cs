@@ -6,6 +6,7 @@ using System.IO;
 
 using SkillBridge.Message;
 using ProtoBuf;
+using Services;
 
 public class LoadingManager : MonoBehaviour {
 
@@ -20,11 +21,11 @@ public class LoadingManager : MonoBehaviour {
     // Use this for initialization
     IEnumerator Start()
     {
-        log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xml"));    //log4net初始化，用于自行记录日志
+        log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.xml"));
         UnityLogger.Init();
         Common.Log.Init("Unity");
         Common.Log.Info("LoadingManager start");
-        //下面则是界面的初始化和显示设置了
+
         UITips.SetActive(true);
         UILoading.SetActive(false);
         UILogin.SetActive(false);
@@ -33,11 +34,11 @@ public class LoadingManager : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         UITips.SetActive(false);
 
-        //yield return DataManager.Instance.LoadData();
+        yield return DataManager.Instance.LoadData();
 
         //Init basic services
         //MapService.Instance.Init();
-        //UserService.Instance.Init();
+        UserService.Instance.Init();
 
 
         // Fake Loading Simulate

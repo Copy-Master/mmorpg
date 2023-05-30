@@ -12,8 +12,9 @@ namespace Services
 {
     class UserService : Singleton<UserService>, IDisposable
     {
-        public UnityEngine.Events.UnityAction<Result, string> OnRegister;
+
         public UnityEngine.Events.UnityAction<Result, string> OnLogin;
+        public UnityEngine.Events.UnityAction<Result, string> OnRegister;
         NetMessage pendingMessage = null;
         bool connected = false;
 
@@ -21,15 +22,15 @@ namespace Services
         {
             NetClient.Instance.OnConnect += OnGameServerConnect;
             NetClient.Instance.OnDisconnect += OnGameServerDisconnect;
-            MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
             MessageDistributer.Instance.Subscribe<UserLoginResponse>(this.OnUserLogin);
-
+            MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
+            
         }
 
         public void Dispose()
         {
-            MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
             MessageDistributer.Instance.Unsubscribe<UserLoginResponse>(this.OnUserLogin);
+            MessageDistributer.Instance.Unsubscribe<UserRegisterResponse>(this.OnUserRegister);
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
         }
@@ -79,9 +80,16 @@ namespace Services
         {
             if (this.pendingMessage != null)
             {
-                if (this.pendingMessage.Request.userRegister!=null)
+                if (this.pendingMessage.Request.userLogin!=null)
                 {
-                    if (this.OnRegister != null || this.OnLogin != null)
+                    if (this.OnLogin != null)
+                    {
+                        this.OnLogin(Result.Failed, string.Format("服务器断开！\n RESULT:{0} ERROR:{1}", result, reason));
+                    }
+                }
+                else if(this.pendingMessage.Request.userRegister!=null)
+                {
+                    if (this.OnRegister != null)
                     {
                         this.OnRegister(Result.Failed, string.Format("服务器断开！\n RESULT:{0} ERROR:{1}", result, reason));
                     }
@@ -89,27 +97,6 @@ namespace Services
                 return true;
             }
             return false;
-        }
-
-        public void SendRegister(string user, string psw)
-        {
-            Debug.LogFormat("UserRegisterRequest::user :{0} psw:{1}", user, psw);
-            NetMessage message = new NetMessage();
-            message.Request = new NetMessageRequest();
-            message.Request.userRegister = new UserRegisterRequest();
-            message.Request.userRegister.User = user;
-            message.Request.userRegister.Passward = psw;
-
-            if (this.connected && NetClient.Instance.Connected)
-            {
-                this.pendingMessage = null;
-                NetClient.Instance.SendMessage(message);
-            }
-            else
-            {
-                this.pendingMessage = message;
-                this.ConnectToServer();
-            }
         }
 
         public void SendLogin(string user, string psw)
@@ -133,6 +120,43 @@ namespace Services
             }
         }
 
+        void OnUserLogin(object sender, UserLoginResponse response)
+        {
+            Debug.LogFormat("OnLogin:{0} [{1}]", response.Result, response.Errormsg);
+
+            if (response.Result == Result.Success)
+            {//登陆成功逻辑
+                Models.User.Instance.SetupUserInfo(response.Userinfo);
+            };
+            if (this.OnLogin != null)
+            {
+                this.OnLogin(response.Result, response.Errormsg);
+
+            }
+        }
+
+
+        public void SendRegister(string user, string psw)
+        {
+            Debug.LogFormat("UserRegisterRequest::user :{0} psw:{1}", user, psw);
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.userRegister = new UserRegisterRequest();
+            message.Request.userRegister.User = user;
+            message.Request.userRegister.Passward = psw;
+
+            if (this.connected && NetClient.Instance.Connected)
+            {
+                this.pendingMessage = null;
+                NetClient.Instance.SendMessage(message);
+            }
+            else
+            {
+                this.pendingMessage = message;
+                this.ConnectToServer();
+            }
+        }
+
         void OnUserRegister(object sender, UserRegisterResponse response)
         {
             Debug.LogFormat("OnUserRegister:{0} [{1}]", response.Result, response.Errormsg);
@@ -140,16 +164,7 @@ namespace Services
             if (this.OnRegister != null)
             {
                 this.OnRegister(response.Result, response.Errormsg);
-            }
-        }
 
-        void OnUserLogin(object sender, UserLoginResponse response)
-        {
-            Debug.LogFormat("OnUserLogin:{0} [{1}]", response.Result, response.Errormsg);
-
-            if (this.OnLogin != null)
-            {
-                this.OnLogin(response.Result, response.Errormsg);
             }
         }
     }
