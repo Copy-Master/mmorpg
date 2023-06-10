@@ -29,12 +29,12 @@ public class LoadingManager : MonoBehaviour {
         UITips.SetActive(true);
         UILoading.SetActive(false);
         UILogin.SetActive(false);
-        yield return new WaitForSeconds(2f);
+        //yield return new WaitForSeconds(2f);
         UILoading.SetActive(true);
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(1f);
         UITips.SetActive(false);
 
-        //yield return DataManager.Instance.LoadData();
+        yield return DataManager.Instance.LoadData();
 
         //Init basic services
         //MapService.Instance.Init();
